@@ -26,4 +26,5 @@ jobs:
             checksum: checksum
     steps:
       - name: test1
-        run: echo "name: ${{ matrix.name }}, url: ${{ matrix.url }}, checksum: ${{ matrix.checksum }}"
+        run: echo "name ${{ matrix.name }} - url ${{ matrix.url }} - checksum ${{ matrix.checksum }}"
+#        run: echo "name: ${{ matrix.name }}, url: ${{ matrix.url }}, checksum: ${{ matrix.checksum }}"
