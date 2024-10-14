@@ -1,0 +1,29 @@
+name: build boards
+
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '6 2 * * 6'
+
+env:
+  BUILDDIR: gh
+
+jobs:
+  prepare:
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Clean up
+        run: rm -fR $BUILDDIR
+      - uses: actions/checkout@v4
+  fetch_images:
+    runs-on: [self-hosted, linux, x64]
+    strategy:
+      matrix:
+        include:
+          - url: url
+            name: name
+            checksum: checksum
+    steps:
+      - name: test1
+        run: echo "name: ${{ matrix.name }}, url: ${{ matrix.url }}, checksum: ${{ matrix.checksum }}"
