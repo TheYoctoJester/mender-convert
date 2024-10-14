@@ -18,12 +18,13 @@ jobs:
       - uses: actions/checkout@v4
   fetch_images:
     runs-on: [self-hosted, linux, x64]
+    needs: [prepare]
     strategy:
       matrix:
         include:
-          - url: url
-            name: name
-            checksum: checksum
+          - url: url_value
+            name: name_value
+            checksum: checksum_value
     steps:
       - name: test1
         run: echo "name ${{ matrix.name }} - url ${{ matrix.url }} - checksum ${{ matrix.checksum }}"
