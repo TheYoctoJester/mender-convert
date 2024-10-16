@@ -32,7 +32,7 @@ jobs:
           if [ ! -f "${{ matrix.name }}" ]; then
             echo "golden image ${{ matrix.name }} not found, downloading"
             wget ${{ matrix.url }}
-          elif [ $(echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status) ]; then
+          elif ! $(echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status; then
             echo "golden image ${{ matrix.name }} checksum mismatch, downloading"
             wget ${{ matrix.url }}
           else
