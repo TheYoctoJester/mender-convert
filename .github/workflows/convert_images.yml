@@ -22,10 +22,18 @@ jobs:
     strategy:
       matrix:
         include:
-          - url: url_value
-            name: name_value
-            checksum: checksum_value
+          - url: https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-07-04/2024-07-04-raspios-bookworm-armhf-lite.img.xz
+            name: 2024-07-04-raspios-bookworm-armhf-lite.img.xz
+            checksum: df9c192d66d35e1ce67acde33a5b5f2b81ff02d2b986ea52f1f6ea211d646a1b
     steps:
-      - name: test1
-        run: echo "name ${{ matrix.name }} - url ${{ matrix.url }} - checksum ${{ matrix.checksum }}"
-#        run: echo "name: ${{ matrix.name }}, url: ${{ matrix.url }}, checksum: ${{ matrix.checksum }}"
+      - name: download_required
+        run: >
+          if [ ! -f "${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}"]; then
+            echo "golden image ${{ matrix.name }} not found, downloading"
+            wget -P ${{ vars.GOLDEN_IMAGE_DIR }} ${{ matrix.url }}
+          elif [ $(sha256sum "${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}" ) -neq "${{ matrix.checksum }}"]; then
+            echo "golden image ${{ matrix.name }} checksum mismatch, downloading"
+            wget -P ${{ vars.GOLDEN_IMAGE_DIR }} ${{ matrix.url }}
+          else
+            echo "golden image ${{ matrix.name }} found, no download needed"
+          fi
