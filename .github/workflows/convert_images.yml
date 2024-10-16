@@ -28,10 +28,10 @@ jobs:
     steps:
       - name: download_required
         run: >
-          if [ ! -f "${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}"]; then
+          if [ ! -f "${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}" ]; then
             echo "golden image ${{ matrix.name }} not found, downloading"
             wget -P ${{ vars.GOLDEN_IMAGE_DIR }} ${{ matrix.url }}
-          elif [ $(sha256sum "${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}" ) -neq "${{ matrix.checksum }}"]; then
+          elif [ $(sha256sum "${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}" ) -neq "${{ matrix.checksum }}" ]; then
             echo "golden image ${{ matrix.name }} checksum mismatch, downloading"
             wget -P ${{ vars.GOLDEN_IMAGE_DIR }} ${{ matrix.url }}
           else
