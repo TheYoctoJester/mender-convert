@@ -39,4 +39,4 @@ jobs:
             echo "golden image ${{ matrix.name }} found, no download needed"
           fi
       - name: integrity check
-        run: echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status)
+        run: echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status
