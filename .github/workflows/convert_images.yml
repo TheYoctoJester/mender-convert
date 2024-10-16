@@ -31,10 +31,12 @@ jobs:
           cd ${{ vars.GOLDEN_IMAGE_DIR }} &&
           if [ ! -f "${{ matrix.name }}" ]; then
             echo "golden image ${{ matrix.name }} not found, downloading"
-            wget ${{ matrix.url }}
+            wget ${{ matrix.url }} -O ${{ matrix.name }}
           elif ! $(echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status); then
             echo "golden image ${{ matrix.name }} checksum mismatch, downloading"
-            wget ${{ matrix.url }}
+            wget ${{ matrix.url }} -O ${{ matrix.name }}
           else
             echo "golden image ${{ matrix.name }} found, no download needed"
           fi
+      - name: integrity check
+        run: echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status)
