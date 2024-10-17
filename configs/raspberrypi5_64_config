@@ -1,0 +1,3 @@
+MENDER_DEVICE_TYPE="raspberrypi5_64"
+
+source configs/raspberrypi_64_config
