@@ -26,11 +26,11 @@ if [ "$UID" -ne 0 ]; then
     exec sudo "$0" "$@"
 fi
 
-DEBIAN_CODENAME="bullseye"
-DEBIAN_IMAGE_ID="Debian-11"
+DEBIAN_CODENAME="bookworm"
+DEBIAN_IMAGE_ID="Debian-12"
 
-UBUNTU_CODENAME="jammy"
-UBUNTU_IMAGE_ID="Ubuntu-Jammy"
+UBUNTU_CODENAME="noble"
+UBUNTU_IMAGE_ID="Ubuntu-Noble"
 
 while [ -n "$1" ]; do
     case "$1" in
