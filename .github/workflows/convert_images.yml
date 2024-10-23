@@ -8,6 +8,7 @@ on:
 
 env:
   BUILDDIR: gh
+  ARTIFACT_PATH: /home/mender/artifacts
 
 jobs:
   prepare:
@@ -16,6 +17,9 @@ jobs:
       - name: Clean up
         run: rm -fR $BUILDDIR
       - uses: actions/checkout@v4
+      - name: make artifact directory
+        run: mkdir -p $ARTIFACT_PATH
+        
 
   fetch_images:
     runs-on: [self-hosted, linux, x64]
@@ -25,3 +29,30 @@ jobs:
         env:
           GOLDEN_IMAGE_DIR: ${{ vars.GOLDEN_IMAGE_DIR }}
         run: ./ci/prepare_images.py
+  
+  setup_work:
+    runs-on: [self-hosted, linux, x64]
+    needs: [fetch_images]
+    steps:
+      - name: make image directory
+        run: mkdir -p input/image
+      - name: copy images
+        env:
+          GOLDEN_IMAGE_DIR: ${{ vars.GOLDEN_IMAGE_DIR }}
+        run: cp -v ${{ vars.GOLDEN_IMAGE_DIR }}/* input/image
+
+  convert:
+    runs-on: [self-hosted, linux, x64]
+    needs: [setup_work]
+    strategy:
+      matrix:
+        include:
+          - config: raspberrypi3_config
+            image: 2024-07-04-raspios-bookworm-armhf-lite.img
+          - config: raspberrypi4_config
+            image: 2024-07-04-raspios-bookworm-armhf-lite.img
+    steps:
+      - name: convert
+        run: ./docker-mender-convert --disk-image input/image/${{ matrix.image }} --config configs/${{ matrix.config }} --config configs/mender_convert_demo_config
+      - name: collect artifacts
+        run: cp -fvR output $ARTIFACT_PATH/${{ matrix.config }}
