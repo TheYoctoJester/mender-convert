@@ -9,6 +9,7 @@ on:
 env:
   BUILDDIR: gh
   ARTIFACT_PATH: /home/mender/artifacts
+  MENDER_ARTIFACT_NAME: gha_autobuild
 
 jobs:
   prepare:
