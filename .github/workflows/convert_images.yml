@@ -1,4 +1,4 @@
-name: build boards
+name: convert images
 
 on:
   workflow_dispatch:
