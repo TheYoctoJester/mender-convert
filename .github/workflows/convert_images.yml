@@ -16,37 +16,12 @@ jobs:
       - name: Clean up
         run: rm -fR $BUILDDIR
       - uses: actions/checkout@v4
+
   fetch_images:
     runs-on: [self-hosted, linux, x64]
     needs: [prepare]
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - url: https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2024-07-04/2024-07-04-raspios-bookworm-armhf-lite.img.xz
-            name: 2024-07-04-raspios-bookworm-armhf-lite.img.xz
-            checksum: df9c192d66d35e1ce67acde33a5b5f2b81ff02d2b986ea52f1f6ea211d646a1b
-          - url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-07-04/2024-07-04-raspios-bookworm-arm64-lite.img.xz
-            name: 2024-07-04-raspios-bookworm-arm64-lite.img.xz
-            checksum: 43d150e7901583919e4eb1f0fa83fe0363af2d1e9777a5bb707d696d535e2599
-          - url: https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2024-07-04/2024-07-04-raspios-bullseye-armhf-lite.img.xz
-            name: 2024-07-04-raspios-bullseye-armhf-lite.img.xz
-            checksum: 10a44eeb5f5bfd000b755425b93914add6c8f0590294189abdf7a9ac7297dc3b
-          - url: https://downloads.raspberrypi.com/raspios_oldstable_lite_arm64/images/raspios_oldstable_lite_arm64-2024-07-04/2024-07-04-raspios-bullseye-arm64-lite.img.xz
-            name: 2024-07-04-raspios-bullseye-arm64-lite.img.xz
-            checksum: 999437f8e1f3f31669deaaeb01aefb94303694e929d0f4c276379383e9169ac4
     steps:
       - name: download_required
-        run: >
-          cd ${{ vars.GOLDEN_IMAGE_DIR }} &&
-          if [ ! -f "${{ matrix.name }}" ]; then
-            echo "golden image ${{ matrix.name }} not found, downloading"
-            wget ${{ matrix.url }} -O ${{ matrix.name }}
-          elif ! $(echo "${{ matrix.checksum }} ${{ matrix.name }}" | sha256sum -c --quiet --status); then
-            echo "golden image ${{ matrix.name }} checksum mismatch, downloading"
-            wget ${{ matrix.url }} -O ${{ matrix.name }}
-          else
-            echo "golden image ${{ matrix.name }} found, no download needed"
-          fi
-      - name: integrity check
-        run: echo "${{ matrix.checksum }} ${{ vars.GOLDEN_IMAGE_DIR }}/${{ matrix.name }}" | sha256sum -c --quiet --status
+        env:
+          GOLDEN_IMAGE_DIR: ${{ vars.GOLDEN_IMAGE_DIR }}
+        run: ./ci/prepare_images.py
