@@ -41,6 +41,11 @@ jobs:
         env:
           GOLDEN_IMAGE_DIR: ${{ vars.GOLDEN_IMAGE_DIR }}
         run: cp -v ${{ vars.GOLDEN_IMAGE_DIR }}/* input/image
+      - name: create dummy configuration
+        run: >
+          ./scripts/bootstrap-rootfs-overlay-hosted-server.sh \
+          --output-dir ${PWD}/input/rootfs_overlay_demo \
+          --tenant-token "THISDOESNOTWORKATALLDONTEVENTRY"
 
   convert:
     runs-on: [self-hosted, linux, x64]
@@ -55,6 +60,11 @@ jobs:
             image: 2024-07-04-raspios-bookworm-armhf-lite.img
     steps:
       - name: convert
-        run: ./docker-mender-convert --disk-image input/image/${{ matrix.image }} --config configs/${{ matrix.config }} --config configs/mender_convert_demo_config
+        run: >
+          ./docker-mender-convert \
+          --disk-image input/image/${{ matrix.image }} \
+          --config configs/${{ matrix.config }} \
+          --config configs/mender_convert_demo_config \
+          --overlay input/rootfs_overlay_demo
       - name: collect artifacts
         run: cp -fvR output $ARTIFACT_PATH/${{ matrix.config }}
